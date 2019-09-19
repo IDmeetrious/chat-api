@@ -5,9 +5,10 @@ const bodyParser = require('body-parser');
 const db = require('./config/db');
 const app = express();
 //Turn on server
-const port = 8000;
+const port = 3005;
 //Use body-parser
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
 MongoClient.connect(db.url, (err, database)=>{
     const ourDB = database.db('db')
     ourDB.collection('accounts')
