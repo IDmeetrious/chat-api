@@ -1,21 +1,38 @@
-// Server
-const express = require('express');
-const MongoClient = require('mongodb').MongoClient;
-const bodyParser = require('body-parser');
-const db = require('./config/db');
-const app = express();
-//Turn on server
-const port = 3005;
-//Use body-parser
-app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true }));
-MongoClient.connect(db.url, (err, database)=>{
-    const ourDB = database.db('db')
-    ourDB.collection('accounts')
-    if(err) return console.log(err)
-    //add route
-    require('./app/routes')(app, database);
-    app.listen(port, () => {
-        console.log('We are live on: '+port)
-    });
+const express = require('express')
+const bodyParser = require('body-parser')
+
+// Create express app
+const app = express()
+// Use PORT
+const port = process.env.PORT || 3005
+
+// Parse content of "applicaton/json"
+app.use(bodyParser.json())
+
+// ---------------- Database ---------------- \\
+// Init database
+const dbConfig = require('./config/database.config')
+const mongoose = require('mongoose')
+mongoose.Promise = global.Promise
+
+// Connect to database
+mongoose.connect(dbConfig.url, { 
+    useNewUrlParser : true, 
+    useUnifiedTopology : true 
+}).then(() => { 
+    'Successfully connected to the database' 
+}).catch(err => { 
+    console.log('Could not connect to the db', err)
+    process.exit() 
+})
+// ---------------- Database ---------------- \\
+
+// Define a starting route
+app.get('/', (req, res) => {
+    res.status(201).json({'message':'Server is online.'})
+})
+
+// Run the server to listen for requests
+app.listen(port, () => { 
+    console.info(`Server is running on port: ${port}`)
 })
