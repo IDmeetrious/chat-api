@@ -32,6 +32,9 @@ app.get('/', (req, res) => {
     res.status(201).json({'message':'Server is online.'})
 })
 
+// Add User routes
+require('./app/routes/user.routes')(app)
+
 // Run the server to listen for requests
 app.listen(port, () => { 
     console.info(`Server is running on port: ${port}`)
